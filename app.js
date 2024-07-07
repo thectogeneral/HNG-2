@@ -12,11 +12,15 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+app.get('/', (req, res) => {
+    res.send('Hello HNG11!')
+  })
 
 app.use('/api', apiRouter);
 app.use('/auth', authRouter)
 
-const PORT = process.env.PORT || 3000;
-
+app.listen(3000, () => {
+    console.log(`Server is running on port 3000`);
+  });
 
 module.exports = app;

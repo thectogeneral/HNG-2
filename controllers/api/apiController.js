@@ -1,5 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const supabase = require('../../database/conn')
+const { v4: uuidv4 } = require('uuid');
+
 
 
 exports.get_user = asyncHandler(async (req, res, next) => {
@@ -30,25 +32,37 @@ exports.get_user = asyncHandler(async (req, res, next) => {
 
 exports.create_organisation = asyncHandler(async (req, res, next) => {
   const { name, description } = req.body;
-  const userId = req.user.userId; 
+    const userId = req.user.userId; 
+    const orgId = uuidv4();
 
-  const { data: organisation, error } = await supabase
-      .from('organisations')
+    const { data: organisation, error } = await supabase
+        .from('organisations')
+        .insert([
+            {
+                orgId: orgId,
+                name: `${name}'s Organisation`,
+                description,
+                created_by: userId, 
+            },
+        ])
+        .single();
+
+    const { data: org_user, error_user } = await supabase
+      .from('organisation_users')
       .insert([
-          {
-              name: `${name}'s Organisation`,
-              description,
-              created_by: userId, 
-          },
+        {
+            orgId: orgId,
+            userId: userId
+        }
       ])
       .single();
 
-  if (error) {2
-      return res.status(400).json({
-          status: 'Bad Request',
-          message: 'Client error',
-          statusCode: 400
-      });
+    if (error) {
+        return res.status(400).json({
+            status: 'Bad Request',
+            message: 'Client error',
+            statusCode: 400
+        });
   }
 
   res.status(201).json({
@@ -70,7 +84,6 @@ exports.get_all_organisations = asyncHandler(async (req, res, next) => {
         .from('organisation_users')
         .select('orgId, organisations(name, description)')
         .eq('userId', userId)
-        console.log(organisations)
 
         if (error) {
             return res.status(400).json({
