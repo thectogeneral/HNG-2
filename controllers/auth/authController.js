@@ -55,7 +55,7 @@ exports.register_user = asyncHandler(async (req, res, next) => {
 
     // Generate a JWT token
     const accessToken = jwt.sign(
-      { userId: user.userId, email: user.email },
+      { userId: user.userId, firstName: user.firstName, lastName:user.lastName, email: user.email, phone: user.phone },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
@@ -138,8 +138,7 @@ exports.login_user = asyncHandler(async (req, res, next) => {
     // Generate JWT token
     const accessToken = jwt.sign(
         {
-            userId: user.userId,
-            email: user.email,
+          userId: user.userId, firstName: user.firstName, lastName:user.lastName, email: user.email, phone: user.phone
         },
         process.env.JWT_SECRET,
         { expiresIn: '1h' } // Token expiration time

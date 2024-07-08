@@ -107,14 +107,30 @@ exports.get_all_organisations = asyncHandler(async (req, res, next) => {
 });
 
 exports.get_single_organisation = asyncHandler(async (req, res, next) => {
-  const { orgId } = req.params;
+    const { orgId } = req.params;
     const userId = req.user.userId;
 
+    // Check if the user is associated with the organisation
+    const { data: userOrg, error: userOrgError } = await supabase
+        .from('organisation_users')
+        .select('*')
+        .eq('orgId', orgId)
+        .eq('userId', userId)
+        .single();
+
+    if (userOrgError || !userOrg) {
+        return res.status(403).json({
+            status: 'error',
+            message: 'Access denied',
+            statusCode: 403
+        });
+    }
+
+    // Fetch the organisation details
     const { data: organisation, error } = await supabase
         .from('organisations')
         .select('*')
         .eq('orgId', orgId)
-        .eq('created_by', userId)
         .single();
 
     if (error || !organisation) {
