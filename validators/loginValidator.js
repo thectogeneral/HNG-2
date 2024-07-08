@@ -6,6 +6,11 @@ const userSchema = Joi.object({
     'string.email': 'Email is invalid',
     'any.required': 'Email is required'
   }),
+  
+  password: Joi.string().required().messages({
+    'string.min': 'Password must be at least 6 characters long',
+    'any.required': 'Password is required'
+  }),
 });
 
 // Middleware to validate the request body against the schema

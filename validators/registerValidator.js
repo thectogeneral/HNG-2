@@ -2,12 +2,12 @@ const Joi = require('joi');
 
 // Define the validation schema
 const userSchema = Joi.object({
-  firstName: Joi.string().min(2).required().messages({
+  firstName: Joi.string().required().messages({
     'string.base': 'First name must be a string',
     'string.min': 'First name must be at least 2 characters long',
     'any.required': 'First name is required'
   }),
-  lastName: Joi.string().min(2).required().messages({
+  lastName: Joi.string().required().messages({
     'string.base': 'Last name must be a string',
     'string.min': 'Last name must be at least 2 characters long',
     'any.required': 'Last name is required'
@@ -16,8 +16,13 @@ const userSchema = Joi.object({
     'string.email': 'Email is invalid',
     'any.required': 'Email is required'
   }),
+  password: Joi.string().required().messages({
+    'string.min': 'Password must be at least 6 characters long',
+    'any.required': 'Password is required'
+  }),
   phone: Joi.string().optional().pattern(/^\d+$/).messages({
-    'string.pattern.base': 'Phone number is invalid'
+    'string.pattern.base': 'Phone number is invalid',
+    'any.required': 'Password is required'
   })
 });
 
